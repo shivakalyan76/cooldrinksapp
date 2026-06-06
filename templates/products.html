@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Products · CoolDrinks{% endblock %}
+{% block page_title %}Products{% endblock %}
+
+{% block content %}
+
+<div class="toolbar">
+  <div class="toolbar-left">
+    <span class="product-count">{{ products|length }} product{{ 's' if products|length != 1 }}</span>
+  </div>
+  <a href="{{ url_for('add_product') }}" class="btn btn--primary">＋ Add Product</a>
+</div>
+
+{% if products %}
+<div class="table-card">
+  <table class="data-table data-table--full">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Product Name</th>
+        <th>Price / Carton</th>
+        <th>Stock</th>
+        <th>Stock Value</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in products %}
+      <tr>
+        <td class="row-id">{{ p.id }}</td>
+        <td class="row-name">{{ p.name }}</td>
+        <td>₹{{ "{:,.2f}".format(p.price) }}</td>
+        <td>
+          <span class="stock-chip {% if p.stock == 0 %}stock-chip--empty{% elif p.stock <= 10 %}stock-chip--low{% elif p.stock <= 20 %}stock-chip--warn{% else %}stock-chip--ok{% endif %}">
+            {{ p.stock }}
+          </span>
+        </td>
+        <td>₹{{ "{:,.0f}".format(p.price * p.stock) }}</td>
+        <td>
+          {% if p.stock == 0 %}
+            <span class="badge badge--red">Out of Stock</span>
+          {% elif p.stock <= 10 %}
+            <span class="badge badge--red">Critical</span>
+          {% elif p.stock <= 20 %}
+            <span class="badge badge--amber">Low Stock</span>
+          {% else %}
+            <span class="badge badge--green">In Stock</span>
+          {% endif %}
+        </td>
+        <td class="actions-cell">
+          <a href="{{ url_for('add_stock', product_id=p.id) }}" class="btn-sm btn-sm--teal" title="Add Stock">＋ Stock</a>
+          <a href="{{ url_for('remove_stock', product_id=p.id) }}" class="btn-sm btn-sm--amber" title="Remove Stock">－ Stock</a>
+          <form method="POST" action="{{ url_for('delete_product', product_id=p.id) }}"
+                onsubmit="return confirm('Delete {{ p.name }}? This cannot be undone.');" style="display:inline;">
+            <button type="submit" class="btn-sm btn-sm--red" title="Delete">✕ Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-page">
+  <div class="empty-icon">▦</div>
+  <h2>No products yet</h2>
+  <p>Start by adding your first product to the inventory.</p>
+  <a href="{{ url_for('add_product') }}" class="btn btn--primary">＋ Add First Product</a>
+</div>
+{% endif %}
+
+{% endblock %}

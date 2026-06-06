@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% block title %}Dashboard · CoolDrinks{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="stats-grid">
+  <div class="stat-card stat-card--blue">
+    <div class="stat-icon">▦</div>
+    <div class="stat-body">
+      <span class="stat-label">Total Products</span>
+      <span class="stat-value">{{ total_products }}</span>
+    </div>
+    <div class="stat-bg-glyph">▦</div>
+  </div>
+
+  <div class="stat-card stat-card--teal">
+    <div class="stat-icon">◫</div>
+    <div class="stat-body">
+      <span class="stat-label">Total Stock (Cartons)</span>
+      <span class="stat-value">{{ "{:,}".format(total_stock) }}</span>
+    </div>
+    <div class="stat-bg-glyph">◫</div>
+  </div>
+
+  <div class="stat-card stat-card--amber">
+    <div class="stat-icon">◈</div>
+    <div class="stat-body">
+      <span class="stat-label">Inventory Value</span>
+      <span class="stat-value">₹{{ "{:,.0f}".format(total_inv_value) }}</span>
+    </div>
+    <div class="stat-bg-glyph">◈</div>
+  </div>
+
+  <div class="stat-card stat-card--rose">
+    <div class="stat-icon">◎</div>
+    <div class="stat-body">
+      <span class="stat-label">Total Bills</span>
+      <span class="stat-value">{{ total_bills }}</span>
+    </div>
+    <div class="stat-bg-glyph">◎</div>
+  </div>
+
+  <div class="stat-card stat-card--green span-2">
+    <div class="stat-icon">₹</div>
+    <div class="stat-body">
+      <span class="stat-label">Total Revenue</span>
+      <span class="stat-value stat-value--large">₹{{ "{:,.0f}".format(total_revenue) }}</span>
+    </div>
+    <div class="stat-bg-glyph">₹</div>
+  </div>
+</div>
+
+<div class="dash-panels">
+
+  <!-- Low Stock -->
+  <div class="panel">
+    <div class="panel-header">
+      <h2 class="panel-title"><span class="panel-dot panel-dot--amber"></span>Low Stock Alert</h2>
+      <a href="{{ url_for('products') }}" class="panel-link">View All →</a>
+    </div>
+    {% if low_stock %}
+    <table class="data-table">
+      <thead>
+        <tr><th>Product</th><th>Stock</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        {% for p in low_stock %}
+        <tr>
+          <td>{{ p.name }}</td>
+          <td>{{ p.stock }}</td>
+          <td>
+            {% if p.stock == 0 %}
+              <span class="badge badge--red">Out of Stock</span>
+            {% elif p.stock <= 10 %}
+              <span class="badge badge--red">Critical</span>
+            {% else %}
+              <span class="badge badge--amber">Low</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+      <span>✓</span>
+      <p>All products have healthy stock levels.</p>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Recent Bills -->
+  <div class="panel">
+    <div class="panel-header">
+      <h2 class="panel-title"><span class="panel-dot panel-dot--blue"></span>Recent Bills</h2>
+      <a href="{{ url_for('bill_history') }}" class="panel-link">View All →</a>
+    </div>
+    {% if recent_bills %}
+    <table class="data-table">
+      <thead>
+        <tr><th>Bill #</th><th>Product</th><th>Qty</th><th>Total</th></tr>
+      </thead>
+      <tbody>
+        {% for b in recent_bills %}
+        <tr>
+          <td><span class="bill-id">#{{ b.id }}</span></td>
+          <td>{{ b.product_name }}</td>
+          <td>{{ b.quantity }}</td>
+          <td><strong>₹{{ "{:,.0f}".format(b.total) }}</strong></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+      <span>◎</span>
+      <p>No bills generated yet.</p>
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+
+<!-- Quick Actions -->
+<div class="quick-actions">
+  <h2 class="section-title">Quick Actions</h2>
+  <div class="action-cards">
+    <a href="{{ url_for('add_product') }}" class="action-card action-card--blue">
+      <span class="action-icon">＋</span>
+      <span>Add New Product</span>
+    </a>
+    <a href="{{ url_for('generate_bill') }}" class="action-card action-card--teal">
+      <span class="action-icon">◈</span>
+      <span>Generate Bill</span>
+    </a>
+    <a href="{{ url_for('products') }}" class="action-card action-card--amber">
+      <span class="action-icon">▦</span>
+      <span>Manage Stock</span>
+    </a>
+    <a href="{{ url_for('bill_history') }}" class="action-card action-card--rose">
+      <span class="action-icon">◎</span>
+      <span>Bill History</span>
+    </a>
+  </div>
+</div>
+
+{% endblock %}

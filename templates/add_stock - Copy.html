@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Add Stock · CoolDrinks{% endblock %}
+{% block page_title %}Add Stock{% endblock %}
+
+{% block content %}
+<div class="form-page">
+  <div class="form-card">
+    <div class="form-card-header form-card-header--teal">
+      <span class="form-card-icon">＋</span>
+      <div>
+        <h2>Add Stock</h2>
+        <p>Increase carton count for <strong>{{ product.name }}</strong></p>
+      </div>
+    </div>
+
+    <div class="stock-info-bar">
+      <div class="stock-info-item">
+        <span class="sib-label">Product</span>
+        <span class="sib-value">{{ product.name }}</span>
+      </div>
+      <div class="stock-info-item">
+        <span class="sib-label">Current Stock</span>
+        <span class="sib-value sib-value--big">{{ product.stock }} cartons</span>
+      </div>
+      <div class="stock-info-item">
+        <span class="sib-label">Unit Price</span>
+        <span class="sib-value">₹{{ "{:,.2f}".format(product.price) }}</span>
+      </div>
+    </div>
+
+    <form method="POST" class="form">
+      <div class="form-group">
+        <label for="quantity">Cartons to Add</label>
+        <input type="number" id="quantity" name="quantity" required min="1" step="1"
+               placeholder="e.g. 20"
+               value="{{ request.form.get('quantity', '') }}">
+        <span class="form-hint">New total will be {{ product.stock }} + entered quantity</span>
+      </div>
+
+      <div class="form-actions">
+        <a href="{{ url_for('products') }}" class="btn btn--ghost">Cancel</a>
+        <button type="submit" class="btn btn--teal">Add Stock →</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

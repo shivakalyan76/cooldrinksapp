@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Remove Stock · CoolDrinks{% endblock %}
+{% block page_title %}Remove Stock{% endblock %}
+
+{% block content %}
+<div class="form-page">
+  <div class="form-card">
+    <div class="form-card-header form-card-header--amber">
+      <span class="form-card-icon">－</span>
+      <div>
+        <h2>Remove Stock</h2>
+        <p>Decrease carton count for <strong>{{ product.name }}</strong></p>
+      </div>
+    </div>
+
+    <div class="stock-info-bar">
+      <div class="stock-info-item">
+        <span class="sib-label">Product</span>
+        <span class="sib-value">{{ product.name }}</span>
+      </div>
+      <div class="stock-info-item">
+        <span class="sib-label">Current Stock</span>
+        <span class="sib-value sib-value--big">{{ product.stock }} cartons</span>
+      </div>
+      <div class="stock-info-item">
+        <span class="sib-label">Unit Price</span>
+        <span class="sib-value">₹{{ "{:,.2f}".format(product.price) }}</span>
+      </div>
+    </div>
+
+    <form method="POST" class="form">
+      <div class="form-group">
+        <label for="quantity">Cartons to Remove</label>
+        <input type="number" id="quantity" name="quantity" required
+               min="1" max="{{ product.stock }}" step="1"
+               placeholder="e.g. 10"
+               value="{{ request.form.get('quantity', '') }}">
+        <span class="form-hint">Maximum removable: {{ product.stock }} cartons</span>
+      </div>
+
+      <div class="form-actions">
+        <a href="{{ url_for('products') }}" class="btn btn--ghost">Cancel</a>
+        <button type="submit" class="btn btn--amber">Remove Stock →</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

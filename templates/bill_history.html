@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Bill History · CoolDrinks{% endblock %}
+{% block page_title %}Bill History{% endblock %}
+
+{% block content %}
+
+<div class="toolbar">
+  <div class="toolbar-left">
+    <span class="product-count">{{ bills|length }} bill{{ 's' if bills|length != 1 }}</span>
+  </div>
+  <a href="{{ url_for('generate_bill') }}" class="btn btn--primary">◈ New Bill</a>
+</div>
+
+{% if bills %}
+<div class="table-card">
+  <table class="data-table data-table--full">
+    <thead>
+      <tr>
+        <th>Bill #</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Items</th>
+       <th>Total</th>
+<th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for b in bills %}
+      <tr>
+        <td><span class="bill-id">#{{ b.id }}</span></td>
+        <td>{{ b.created_at[:10] }}</td>
+        <td>{{ b.created_at[11:16] }}</td>
+        <td>
+    {{ b.item_count }} item(s)
+</td>
+        <td><strong>₹{{ "{:,.2f}".format(b.total) }}</strong></td>
+
+<td>
+    <a href="/bill/{{ b.id }}" class="btn btn--primary">
+        View
+    </a>
+</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr class="table-total-row">
+        <td colspan="6">Grand Total</td>
+        <td><strong>₹{{ "{:,.2f}".format(bills | sum(attribute='total')) }}</strong></td>
+      </tr>
+    </tfoot>
+  </table>
+</div>
+{% else %}
+<div class="empty-page">
+  <div class="empty-icon">◎</div>
+  <h2>No bills yet</h2>
+  <p>Generate your first bill to see the history here.</p>
+  <a href="{{ url_for('generate_bill') }}" class="btn btn--primary">◈ Generate Bill</a>
+</div>
+{% endif %}
+
+{% endblock %}
